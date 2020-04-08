@@ -75,11 +75,7 @@
 #endif
 #if HOTENDS == 1
   #ifndef FAN1_PIN
-<<<<<<< HEAD
-    #define FAN1_PIN       P2_03 // P2_04
-=======
-    #define FAN1_PIN                       P2_04
->>>>>>> upstream/2.0.x
+    #define FAN1_PIN                       P2_03 // P2_04
   #endif
 #else
   #ifndef HEATER_1_PIN
@@ -87,11 +83,7 @@
   #endif
 #endif
 #ifndef FAN_PIN
-<<<<<<< HEAD
-  #define FAN_PIN          P2_04 // P2_03
-=======
-  #define FAN_PIN                          P2_03
->>>>>>> upstream/2.0.x
+  #define FAN_PIN                          P2_04 // P2_03
 #endif
 #ifndef HEATER_BED_PIN
   #define HEATER_BED_PIN                   P2_05
