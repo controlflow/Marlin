@@ -160,6 +160,8 @@
 #define TEMP_1_PIN                      P0_23_A0  // A2 (T2) - (69) - TEMP_1_PIN
 #define TEMP_BED_PIN                    P0_25_A2  // A0 (T0) - (67) - TEMP_BED_PIN
 
+#define TEMP_CHAMBER_PIN                P0_23_A0  // TH1 pin
+
 //
 // Software SPI pins for TMC2130 stepper drivers
 //
@@ -298,7 +300,7 @@
           #define RGB_LED_B_PIN            P1_23
         #endif
       #elif ENABLED(FYSETC_MINI_12864_2_1)
-        #define NEOPIXEL_PIN               P1_21
+        //#define NEOPIXEL_PIN               P1_21
       #endif
 
     #else                                         // !FYSETC_MINI_12864
