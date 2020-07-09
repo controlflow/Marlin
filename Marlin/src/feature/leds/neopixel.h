@@ -38,8 +38,8 @@
 // Defines
 // ------------------------
 
-#if defined(NEOPIXEL2_TYPE) && NEOPIXEL2_TYPE != NEOPIXEL_TYPE
-  #define MULTIPLE_NEOPIXEL_TYPES 1
+#if defined(NEOPIXEL2_TYPE) && !defined(NEOPIXEL2_PIXELS)
+  #define NEOPIXEL2_PIXELS NEOPIXEL_PIXELS
 #endif
 
 #if NEOPIXEL_TYPE == NEO_RGB || NEOPIXEL_TYPE == NEO_RBG || NEOPIXEL_TYPE == NEO_GRB || NEOPIXEL_TYPE == NEO_GBR || NEOPIXEL_TYPE == NEO_BRG || NEOPIXEL_TYPE == NEO_BGR
@@ -61,7 +61,7 @@
 class Marlin_NeoPixel {
 private:
   static Adafruit_NeoPixel adaneo1
-    #if MULTIPLE_NEOPIXEL_TYPES
+    #if defined(NEOPIXEL2_TYPE)
       , adaneo2
     #endif
   ;
@@ -82,29 +82,34 @@ public:
 
   static inline void begin() {
     adaneo1.begin();
-    TERN_(MULTIPLE_NEOPIXEL_TYPES, adaneo2.begin());
+    #if defined(NEOPIXEL2_TYPE)
+      adaneo2.begin();
+    #endif
   }
 
   static inline void set_pixel_color(const uint16_t n, const uint32_t c) {
-    adaneo1.setPixelColor(n, c);
-    TERN_(MULTIPLE_NEOPIXEL_TYPES, adaneo2.setPixelColor(n, c));
+    #if defined(NEOPIXEL2_TYPE)
+      if (n < NEOPIXEL_PIXELS) {
+        adaneo1.setPixelColor(n, c);
+      } else {
+        adaneo2.setPixelColor(n - NEOPIXEL_PIXELS, c);
+      }
+    #else
+      adaneo1.setPixelColor(n, c);
+    #endif
   }
 
   static inline void set_brightness(const uint8_t b) {
     adaneo1.setBrightness(b);
-    TERN_(MULTIPLE_NEOPIXEL_TYPES, adaneo2.setBrightness(b));
+    #if defined(NEOPIXEL2_TYPE)
+      adaneo2.setBrightness(b);
+    #endif
   }
 
   static inline void show() {
     adaneo1.show();
-    #if PIN_EXISTS(NEOPIXEL2)
-      #if MULTIPLE_NEOPIXEL_TYPES
-        adaneo2.show();
-      #else
-        adaneo1.setPin(NEOPIXEL2_PIN);
-        adaneo1.show();
-        adaneo1.setPin(NEOPIXEL_PIN);
-      #endif
+    #if defined(NEOPIXEL2_TYPE)
+      adaneo2.show();
     #endif
   }
 
@@ -113,7 +118,14 @@ public:
   #endif
 
   // Accessors
-  static inline uint16_t pixels() { return adaneo1.numPixels(); }
+  static inline uint16_t pixels() {
+    return NEOPIXEL_PIXELS
+      #if defined(NEOPIXEL2_TYPE)
+        + NEOPIXEL2_PIXELS
+      #endif
+      ;
+  }
+
   static inline uint8_t brightness() { return adaneo1.getBrightness(); }
   static inline uint32_t Color(uint8_t r, uint8_t g, uint8_t b, uint8_t w) {
     return adaneo1.Color(r, g, b, w);

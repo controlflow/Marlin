@@ -38,8 +38,8 @@ Marlin_NeoPixel neo;
 int8_t Marlin_NeoPixel::neoindex;
 
 Adafruit_NeoPixel Marlin_NeoPixel::adaneo1(NEOPIXEL_PIXELS, NEOPIXEL_PIN, NEOPIXEL_TYPE + NEO_KHZ800)
-  #if MULTIPLE_NEOPIXEL_TYPES
-    , Marlin_NeoPixel::adaneo2(NEOPIXEL_PIXELS, NEOPIXEL2_PIN, NEOPIXEL2_TYPE + NEO_KHZ800)
+  #if defined(NEOPIXEL2_TYPE)
+    , Marlin_NeoPixel::adaneo2(NEOPIXEL2_PIXELS, NEOPIXEL2_PIN, NEOPIXEL2_TYPE + NEO_KHZ800)
   #endif
 ;
 
@@ -53,8 +53,9 @@ Adafruit_NeoPixel Marlin_NeoPixel::adaneo1(NEOPIXEL_PIXELS, NEOPIXEL_PIN, NEOPIX
 #endif
 
 void Marlin_NeoPixel::set_color(const uint32_t color) {
-  if (get_neo_index() >= 0) {
-    set_pixel_color(get_neo_index(), color);
+  int8_t led_index = get_neo_index();
+  if (led_index >= 0) {
+    set_pixel_color(led_index, color);
     set_neo_index(-1);
   }
   else {
@@ -72,8 +73,10 @@ void Marlin_NeoPixel::set_color(const uint32_t color) {
 }
 
 void Marlin_NeoPixel::set_color_startup(const uint32_t color) {
-  for (uint16_t i = 0; i < pixels(); ++i)
+  for (uint16_t i = 0; i < pixels(); ++i) {
     set_pixel_color(i, color);
+  }
+
   show();
 }
 
